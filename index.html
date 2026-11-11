@@ -17,56 +17,196 @@
 <title>مستنداتي</title>
 </head>
 <body>
-<div class="demo-banner" role="status">نسخة تجريبية بملفات وهمية — لم يُربط Google Drive ولا التشفير الحقيقي بعد</div>
+<div class="demo-banner" role="status">نسخة تجريبية — بياناتك على هذا الجهاز فقط ومشفّرة، ولم يُربط Google Drive بعد</div>
 
-<div class="hero">
-  <div class="top">
-    <div class="brand">
-      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#C9A24B"/><path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#0B1F3A"/><path d="M38 12v9h9" fill="#1B3E6F"/><path d="M24 31h18M24 38h18M24 45h11" stroke="#C9A24B" stroke-width="3" stroke-linecap="round"/></svg>
-      <span>مستنداتي</span>
-    </div>
-    <button class="sync-chip" id="syncChip" type="button" aria-live="polite"><i></i><span id="syncText">وضع تجريبي</span></button>
+<!-- تحميل / خطأ التخزين -->
+<section id="scrBoot" class="gate">
+  <div class="panel center">
+    <div class="spinner" id="spinner" aria-hidden="true"></div>
+    <p id="bootMsg">جارٍ التحميل…</p>
   </div>
-  <p class="tagline">أوراقك المهمة… محفوظة بأمان، وتجدها في ثوانٍ<small>ابحث بالاسم أو التصنيف أو الوسم أو بما كُتب داخل المستند</small></p>
+</section>
+
+<!-- ترحيب -->
+<section id="scrWelcome" class="gate" hidden>
+  <div class="panel">
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#C9A24B"/><path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#0B1F3A"/><path d="M38 12v9h9" fill="#1B3E6F"/><path d="M24 31h18M24 38h18M24 45h11" stroke="#C9A24B" stroke-width="3" stroke-linecap="round"/></svg></div>
+    <h1>مرحبًا بك في مستنداتي</h1>
+    <p>سنجهّز الآن حماية بياناتك على هذا الجهاز. ثلاث خطوات قصيرة:</p>
+    <ol class="steps">
+      <li>تختار <b>رمز قفل</b> من 6 أرقام.</li>
+      <li>تحصل على <b>مفتاح استرداد</b> تكتبه على ورقة وتحفظه بعيدًا عن الجوال.</li>
+      <li>تؤكد أنك كتبته، ثم يبدأ التطبيق.</li>
+    </ol>
+    <p class="hint">في هذه المرحلة تبقى بياناتك على هذا الجهاز فقط، فلا تعتمد عليها وحدها. المزامنة مع Drive تأتي لاحقًا.</p>
+    <button class="btn" id="btnStart" type="button">ابدأ الإعداد</button>
+  </div>
+</section>
+
+<!-- إنشاء الرمز -->
+<section id="scrPin" class="gate" hidden>
+  <form class="panel" id="formPin" autocomplete="off" novalidate>
+    <h1>أنشئ رمز القفل</h1>
+    <p>ستة أرقام تفتح بها التطبيق. لا تستخدم رمز جوالك أو تاريخ ميلادك.</p>
+    <div class="field"><label for="pin1">الرمز</label><input id="pin1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <div class="field"><label for="pin2">أعد كتابة الرمز</label><input id="pin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <p class="err" id="pinErr" role="alert" hidden></p>
+    <button class="btn" id="btnPin" type="submit">متابعة</button>
+  </form>
+</section>
+
+<!-- مفتاح الاسترداد -->
+<section id="scrRecovery" class="gate" hidden>
+  <div class="panel">
+    <h1>مفتاح الاسترداد</h1>
+    <p>هذا المفتاح هو <b>الطريقة الوحيدة</b> لاستعادة بياناتك إن نسيت الرمز أو فقدت الجهاز. اكتبه بخط يدك على ورقة.</p>
+    <div class="reckey" id="recKey" dir="ltr" aria-label="مفتاح الاسترداد"></div>
+    <ul class="warns">
+      <li>لا تصوّره، ولا تحفظه في ملاحظات أو رسائل أو بريد.</li>
+      <li>لن يُعرض لك مرة أخرى، ولا نستطيع استعادته لك.</li>
+      <li>إن ضاع المفتاح وضاع الجهاز معًا فلا سبيل لاسترداد البيانات.</li>
+    </ul>
+    <button class="btn ghost" id="btnCopy" type="button">نسخ المفتاح</button>
+    <p class="ok" id="copyMsg" hidden>تم النسخ. الصقه في مدير كلمات مرور فقط، ثم امسح الحافظة.</p>
+    <label class="check"><input type="checkbox" id="recAck"> كتبتُ المفتاح كاملًا على ورقة وسأحفظها في مكان آمن</label>
+    <button class="btn" id="btnRecNext" type="button" disabled>متابعة</button>
+  </div>
+</section>
+
+<!-- تأكيد المفتاح -->
+<section id="scrConfirm" class="gate" hidden>
+  <form class="panel" id="formConfirm" autocomplete="off" novalidate>
+    <h1>تأكيد المفتاح</h1>
+    <p>انظر إلى ورقتك واكتب المجموعتين التاليتين (كل مجموعة 5 أحرف، وتُعدّ من البداية).</p>
+    <div class="field"><label for="ansA">المجموعة رقم <b id="chA"></b></label><input id="ansA" dir="ltr" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></div>
+    <div class="field"><label for="ansB">المجموعة رقم <b id="chB"></b></label><input id="ansB" dir="ltr" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="8"></div>
+    <p class="err" id="confErr" role="alert" hidden></p>
+    <button class="btn" id="btnConf" type="submit">تأكيد وبدء الاستخدام</button>
+    <button class="btn ghost" id="btnConfBack" type="button">رجوع لرؤية المفتاح</button>
+  </form>
+</section>
+
+<!-- القفل -->
+<section id="scrLock" class="gate" hidden>
+  <form class="panel center" id="formUnlock" autocomplete="off" novalidate>
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#C9A24B"/><path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#0B1F3A"/><path d="M38 12v9h9" fill="#1B3E6F"/><path d="M24 31h18M24 38h18M24 45h11" stroke="#C9A24B" stroke-width="3" stroke-linecap="round"/></svg></div>
+    <h1>التطبيق مقفل</h1>
+    <div class="field"><label for="unlockPin">أدخل رمز القفل</label><input id="unlockPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr" class="pin-big"></div>
+    <p class="err" id="unlockErr" role="alert" hidden></p>
+    <button class="btn" id="btnUnlock" type="submit">فتح</button>
+    <button class="btn link" id="btnForgot" type="button">نسيت الرمز؟</button>
+  </form>
+</section>
+
+<!-- الاسترداد -->
+<section id="scrForgot" class="gate" hidden>
+  <form class="panel" id="formForgot" autocomplete="off" novalidate>
+    <h1>استرداد بمفتاح الاسترداد</h1>
+    <p>اكتب المفتاح من ورقتك، ثم اختر رمز قفل جديدًا. بياناتك ستبقى كما هي.</p>
+    <div class="field"><label for="fgKey">مفتاح الاسترداد</label><textarea id="fgKey" rows="3" dir="ltr" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false"></textarea></div>
+    <div class="field"><label for="fgPin1">رمز القفل الجديد</label><input id="fgPin1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <div class="field"><label for="fgPin2">أعد كتابة الرمز</label><input id="fgPin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <p class="err" id="fgErr" role="alert" hidden></p>
+    <button class="btn" id="btnFg" type="submit">استرداد</button>
+    <button class="btn ghost" id="btnFgBack" type="button">رجوع</button>
+  </form>
+</section>
+
+<!-- التطبيق -->
+<div id="app" hidden>
+  <div class="hero">
+    <div class="top">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#C9A24B"/><path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#0B1F3A"/><path d="M38 12v9h9" fill="#1B3E6F"/><path d="M24 31h18M24 38h18M24 45h11" stroke="#C9A24B" stroke-width="3" stroke-linecap="round"/></svg>
+        <span>مستنداتي</span>
+      </div>
+      <div class="tools">
+        <button class="icon-btn" id="btnAdd" type="button" aria-label="إضافة وثيقة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="icon-btn" id="btnLockNow" type="button" aria-label="قفل التطبيق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+        <button class="icon-btn" id="btnSettings" type="button" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
+      </div>
+    </div>
+    <p class="tagline">أوراقك المهمة… محفوظة بأمان، وتجدها في ثوانٍ<small>ابحث بالاسم أو التصنيف أو الوسم أو بما كُتب داخل المستند</small></p>
+  </div>
+
+  <main>
+    <div class="search" id="searchBox" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label class="sr" for="q">بحث في المستندات</label>
+      <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ابحث: فاتورة، عقد، جواز…">
+      <button id="clear" type="button" aria-label="مسح البحث">×</button>
+    </div>
+
+    <section id="resultsSection" hidden aria-live="polite">
+      <h2 id="resultsTitle">النتائج</h2>
+      <div class="results" id="results"></div>
+      <p class="note" id="partialNote" hidden>لم يُعثر على مستند يحوي كل الكلمات؛ تُعرض مستندات تحوي بعضها.</p>
+    </section>
+
+    <section>
+      <h2>التصنيفات</h2>
+      <div class="chips" id="chips"></div>
+    </section>
+
+    <section>
+      <h2>إحصاءات</h2>
+      <div class="stats">
+        <div class="stat"><div class="n" id="sDocs">0</div><div class="l">مستند</div></div>
+        <div class="stat"><div class="n" id="sCats">0</div><div class="l">تصنيف</div></div>
+        <div class="stat"><div class="n sm" id="sSync">—</div><div class="l">آخر مزامنة</div></div>
+        <div class="stat"><div class="n" id="sPending">0</div><div class="l">بانتظار الرفع</div></div>
+      </div>
+    </section>
+
+    <div class="status">
+      <strong>حالة هذه النسخة</strong>
+      <ul>
+        <li>تعمل الآن: القفل، التشفير المحلي، الحفظ على الجهاز، البحث العربي، العمل دون اتصال.</li>
+        <li>لم تُفعَّل بعد: Google Drive، المزامنة، التصوير، OCR، Passkey. الوثائق هنا بيانات فقط دون ملفات.</li>
+      </ul>
+    </div>
+  </main>
 </div>
 
-<main>
-  <div class="search" id="searchBox" role="search">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <label class="sr" for="q">بحث في المستندات</label>
-    <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="ابحث: فاتورة، عقد، جواز…">
-    <button id="clear" type="button" aria-label="مسح البحث">×</button>
-  </div>
+<!-- إضافة وثيقة -->
+<dialog id="dlgAdd">
+  <form class="dlg-body" id="formAdd" autocomplete="off" novalidate>
+    <h2>إضافة وثيقة</h2>
+    <p class="hint">بيانات الوثيقة فقط (الاسم والتصنيف والوسوم والملاحظة). رفع الملفات والتصوير يأتيان في مراحل لاحقة.</p>
+    <div class="field"><label for="dName">الاسم</label><input id="dName" maxlength="120"></div>
+    <div class="field"><label for="dCat">التصنيف</label><input id="dCat" list="catList" maxlength="40"><datalist id="catList"></datalist></div>
+    <div class="field"><label for="dTags">الوسوم (افصل بينها بفاصلة)</label><input id="dTags" maxlength="200"></div>
+    <div class="field"><label for="dText">ملاحظة أو نص من الوثيقة</label><textarea id="dText" rows="3" maxlength="5000"></textarea></div>
+    <p class="err" id="addErr" role="alert" hidden></p>
+    <div class="row"><button class="btn" type="submit">حفظ</button><button class="btn ghost" type="button" data-close="dlgAdd">إلغاء</button></div>
+  </form>
+</dialog>
 
-  <section id="resultsSection" hidden aria-live="polite">
-    <h2 id="resultsTitle">النتائج</h2>
-    <div class="results" id="results"></div>
-    <p class="note" id="partialNote" hidden>لم يُعثر على مستند يحوي كل الكلمات؛ تُعرض مستندات تحوي بعضها.</p>
-  </section>
-
-  <section>
-    <h2>التصنيفات</h2>
-    <div class="chips" id="chips"></div>
-  </section>
-
-  <section>
-    <h2>إحصاءات</h2>
-    <div class="stats">
-      <div class="stat"><div class="n" id="sDocs">0</div><div class="l">مستند</div></div>
-      <div class="stat"><div class="n" id="sCats">0</div><div class="l">تصنيف</div></div>
-      <div class="stat"><div class="n sm" id="sSync">—</div><div class="l">آخر مزامنة</div></div>
-      <div class="stat"><div class="n" id="sPending">0</div><div class="l">بانتظار الرفع</div></div>
+<!-- الإعدادات -->
+<dialog id="dlgSettings">
+  <div class="dlg-body">
+    <h2>الإعدادات</h2>
+    <p class="hint">يُقفل التطبيق تلقائيًا بعد دقيقة من خروجك منه، أو بعد 5 دقائق دون استخدام.</p>
+    <p class="hint" id="persistMsg"></p>
+    <div class="col">
+      <button class="btn ghost" type="button" id="btnChangePin">تغيير رمز القفل</button>
+      <button class="btn ghost" type="button" id="btnRemoveDemo" hidden>حذف الوثائق التجريبية</button>
+      <button class="btn danger" type="button" id="btnWipe">مسح كل بيانات هذا الجهاز</button>
+      <button class="btn" type="button" data-close="dlgSettings">إغلاق</button>
     </div>
-  </section>
-
-  <div class="status">
-    <strong>حالة هذه النسخة</strong>
-    <ul>
-      <li>تعمل الآن: الواجهة، والبحث العربي على بيانات وهمية.</li>
-      <li>لم تُفعَّل بعد: الدخول بحساب Google، التصوير، OCR، الرفع إلى Drive، Passkey.</li>
-    </ul>
   </div>
-</main>
+</dialog>
+
+<!-- تغيير الرمز -->
+<dialog id="dlgPin">
+  <form class="dlg-body" id="formChangePin" autocomplete="off" novalidate>
+    <h2>تغيير رمز القفل</h2>
+    <div class="field"><label for="np1">الرمز الجديد</label><input id="np1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <div class="field"><label for="np2">أعد كتابة الرمز</label><input id="np2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" dir="ltr"></div>
+    <p class="err" id="npErr" role="alert" hidden></p>
+    <div class="row"><button class="btn" type="submit">حفظ</button><button class="btn ghost" type="button" data-close="dlgPin">إلغاء</button></div>
+  </form>
+</dialog>
 
 <script type="module" src="app.js"></script>
 </body>

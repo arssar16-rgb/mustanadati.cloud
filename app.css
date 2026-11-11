@@ -73,3 +73,58 @@ h2{font-size:1rem;margin:0 0 10px;color:var(--navy-700);font-weight:700}
 .status ul{margin:6px 0 0;padding-inline-start:20px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ===== المرحلة 1: الشاشات والنماذج ===== */
+[hidden]{display:none!important}
+.gate{min-height:calc(100vh - 36px);display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + var(--safe-b));background:linear-gradient(160deg,var(--navy-900),var(--navy-700) 70%,var(--navy-600))}
+.panel{background:var(--card);border-radius:24px;padding:26px 22px;width:100%;max-width:460px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.panel.center{text-align:center}
+.panel h1{margin:0 0 8px;font-size:1.35rem;color:var(--navy-800)}
+.panel p{margin:0 0 14px;color:#3C4C63;font-size:.95rem}
+.logo svg{width:64px;height:64px;margin-bottom:10px}
+.steps{margin:0 0 14px;padding-inline-start:22px;color:#3C4C63;font-size:.95rem}
+.steps li{margin-bottom:6px}
+.hint{font-size:.82rem!important;color:var(--muted)!important}
+.err{color:#B3261E!important;font-weight:500;background:#FDECEA;border-radius:12px;padding:10px 12px;font-size:.9rem}
+.ok{color:var(--ok)!important;font-weight:500}
+.field{margin-bottom:14px;text-align:start}
+.field label{display:block;font-size:.88rem;font-weight:500;color:var(--navy-700);margin-bottom:6px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-size:1.1rem;background:#fff;min-height:52px;font-family:inherit}
+.field textarea{resize:vertical}
+.field input:focus,.field textarea:focus{outline:0;border-color:var(--gold)}
+.field input[dir=ltr],.field textarea[dir=ltr]{text-align:left}
+.pin-big{text-align:center!important;letter-spacing:.5em;font-size:1.6rem!important}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:14px;background:var(--navy-800);color:#fff;font-weight:700;font-size:1.02rem;cursor:pointer;margin-top:10px;padding:0 16px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--navy-700);border:1.5px solid var(--line)}
+.btn.danger{background:#fff;color:#B3261E;border:1.5px solid #E7B4AF}
+.btn.link{background:transparent;color:var(--navy-600);min-height:44px;font-weight:500}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.col{display:flex;flex-direction:column}
+.check{display:flex;gap:10px;align-items:flex-start;margin:14px 0 4px;font-size:.92rem;color:var(--navy-800)}
+.check input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--navy-800)}
+.warns{margin:0 0 14px;padding-inline-start:20px;font-size:.88rem;color:#7A2E0E}
+.warns li{margin-bottom:4px}
+.reckey{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}
+.reckey span{background:var(--navy-100);color:var(--navy-800);border-radius:12px;padding:10px 4px;text-align:center;font:700 1.05rem ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.12em;position:relative}
+.reckey small{display:block;font:500 .65rem "IBM Plex Sans Arabic",sans-serif;letter-spacing:0;color:var(--muted)}
+.spinner{width:36px;height:36px;border:4px solid var(--navy-100);border-top-color:var(--navy-700);border-radius:50%;margin:6px auto 12px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+
+.tools{display:flex;gap:8px}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.12);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.icon-btn svg{width:20px;height:20px}
+.result{position:relative}
+.result .del{position:absolute;inset-block-start:10px;inset-inline-start:10px;border:0;background:transparent;color:#B3261E;font-size:.8rem;cursor:pointer;min-height:36px;padding:0 8px}
+.result h3{padding-inline-start:52px}
+
+dialog{border:0;border-radius:22px;padding:0;width:calc(100% - 32px);max-width:460px;color:var(--ink);font-family:inherit}
+dialog::backdrop{background:rgba(7,22,43,.65)}
+.dlg-body{padding:22px 20px}
+.dlg-body h2{font-size:1.15rem;margin:0 0 10px;color:var(--navy-800)}
+.dlg-body .hint{margin:0 0 12px}
+
+/* شاشات القفل والإعداد تملأ ما تحت الشريط الذهبي دون فراغات */
+body.gated{display:flex;flex-direction:column;padding-bottom:0;background:var(--navy-900)}
+body.gated .gate{flex:1;min-height:0;margin-top:0}
